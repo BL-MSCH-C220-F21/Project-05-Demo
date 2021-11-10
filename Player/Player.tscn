@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
 [ext_resource path="res://Player/Flash.tres" type="Material" id=2]
 [ext_resource path="res://Player/Blaster.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Assets/muzzleflash.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://Assets/crosshair.png" type="Texture" id=5]
+[ext_resource path="res://Player/HealthBar.gd" type="Script" id=6]
 
 [sub_resource type="CapsuleMesh" id=1]
 radius = 0.5
@@ -15,11 +16,17 @@ albedo_color = Color( 0.00784314, 0, 1, 1 )
 [sub_resource type="CapsuleShape" id=3]
 radius = 0.5
 
-[sub_resource type="BoxShape" id=5]
+[sub_resource type="BoxShape" id=6]
 extents = Vector3( 0.4, 0.1, 0.4 )
 
-[sub_resource type="BoxShape" id=4]
+[sub_resource type="BoxShape" id=5]
 extents = Vector3( 0.0625365, 0.1396, 0.399884 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.25098, 0.752941, 0.341176, 1 )
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0.203922, 0.227451, 0.25098, 1 )
 
 [node name="Player" type="KinematicBody"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
@@ -36,11 +43,11 @@ shape = SubResource( 3 )
 
 [node name="Feet" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
-shape = SubResource( 5 )
+shape = SubResource( 6 )
 
 [node name="Gun" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.525345, 1.31861, -0.796132 )
-shape = SubResource( 4 )
+shape = SubResource( 5 )
 
 [node name="Pivot" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0 )
@@ -79,5 +86,24 @@ omni_attenuation = 5.27803
 [node name="Timer" type="Timer" parent="Pivot/Flash"]
 wait_time = 0.2
 one_shot = true
+
+[node name="HealthBar" type="Sprite3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
+billboard = 1
+script = ExtResource( 6 )
+
+[node name="Viewport" type="Viewport" parent="HealthBar"]
+size = Vector2( 200, 26 )
+transparent_bg = true
+usage = 0
+render_target_v_flip = true
+
+[node name="HealthBar2D" type="ProgressBar" parent="HealthBar/Viewport"]
+margin_right = 200.0
+margin_bottom = 26.0
+custom_styles/fg = SubResource( 7 )
+custom_styles/bg = SubResource( 8 )
+value = 100.0
+percent_visible = false
 
 [connection signal="timeout" from="Pivot/Flash/Timer" to="." method="_on_Timer_timeout"]
