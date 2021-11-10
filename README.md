@@ -13,6 +13,7 @@ Built using Godot 3.3.3
  - [Muzzle flash with model, by Julius](https://opengameart.org/content/muzzle-flash-with-model)
  - [kenney.nl Shooting Gallery](https://kenney.nl/assets/shooting-gallery)
  - [3D Multiplayer for Beginners](https://www.youtube.com/watch?v=K0luHLZxjBA)
+ - [3D Unit Healthbars from KidsCanCode](https://kidscancode.org/godot_recipes/3d/healthbars/)
 
 ## Future Development
 None
