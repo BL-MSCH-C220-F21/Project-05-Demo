@@ -1,9 +1,6 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Player/Player.gd" type="Script" id=1]
-[ext_resource path="res://Player/Flash.tres" type="Material" id=2]
-[ext_resource path="res://Player/Blaster.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Assets/muzzleflash.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://Assets/crosshair.png" type="Texture" id=5]
 
 [sub_resource type="CapsuleMesh" id=1]
@@ -15,11 +12,14 @@ albedo_color = Color( 0.00784314, 0, 1, 1 )
 [sub_resource type="CapsuleShape" id=3]
 radius = 0.5
 
-[sub_resource type="BoxShape" id=5]
+[sub_resource type="BoxShape" id=4]
 extents = Vector3( 0.4, 0.1, 0.4 )
 
-[sub_resource type="BoxShape" id=4]
+[sub_resource type="BoxShape" id=5]
 extents = Vector3( 0.0625365, 0.1396, 0.399884 )
+
+[sub_resource type="SphereShape" id=6]
+radius = 2.5
 
 [node name="Player" type="KinematicBody"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
@@ -36,11 +36,11 @@ shape = SubResource( 3 )
 
 [node name="Feet" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
-shape = SubResource( 5 )
+shape = SubResource( 4 )
 
 [node name="Gun" type="CollisionShape" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.525345, 1.31861, -0.796132 )
-shape = SubResource( 4 )
+shape = SubResource( 5 )
 
 [node name="Pivot" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0 )
@@ -52,32 +52,10 @@ transform = Transform( 0.15, 0, 0, 0, 0.15, 0, 0, 0, 1, 0, 0, -1 )
 billboard = 1
 texture = ExtResource( 5 )
 
-[node name="Blaster" parent="Pivot" instance=ExtResource( 3 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.675617, -0.280405, -0.181613 )
+[node name="Area" type="Area" parent="."]
 
-[node name="RayCast" type="RayCast" parent="Pivot"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.688618 )
-enabled = true
-cast_to = Vector3( 0, 0, -100 )
+[node name="CollisionShape" type="CollisionShape" parent="Area"]
+shape = SubResource( 6 )
 
-[node name="Flash" type="Spatial" parent="Pivot"]
-visible = false
-
-[node name="muzzleflash" type="MeshInstance" parent="Pivot/Flash"]
-transform = Transform( 0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0.492739, -0.192629, -1.28 )
-mesh = ExtResource( 4 )
-material/0 = ExtResource( 2 )
-material/1 = ExtResource( 2 )
-material/2 = ExtResource( 2 )
-
-[node name="OmniLight" type="OmniLight" parent="Pivot/Flash"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.513054, -0.232031, -1.43417 )
-light_color = Color( 1, 0.952941, 0.74902, 1 )
-light_energy = 40.0
-omni_attenuation = 5.27803
-
-[node name="Timer" type="Timer" parent="Pivot/Flash"]
-wait_time = 0.2
-one_shot = true
-
-[connection signal="timeout" from="Pivot/Flash/Timer" to="." method="_on_Timer_timeout"]
+[connection signal="body_entered" from="Area" to="." method="_on_Area_body_entered"]
+[connection signal="body_exited" from="Area" to="." method="_on_Area_body_exited"]

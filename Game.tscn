@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Game.gd" type="Script" id=1]
 [ext_resource path="res://UI/HUD.gd" type="Script" id=2]
+[ext_resource path="res://Guns/Blaster.tscn" type="PackedScene" id=3]
 
 [sub_resource type="CubeMesh" id=1]
 size = Vector3( 40, 2, 40 )
@@ -60,3 +61,8 @@ __meta__ = {
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.919046, 0.39415, 0, -0.39415, 0.919046, 0, 10.8992, 22.0224 )
 current = true
+
+[node name="Guns" type="Spatial" parent="."]
+
+[node name="Blaster" parent="Guns" instance=ExtResource( 3 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.02069, -4.23165 )

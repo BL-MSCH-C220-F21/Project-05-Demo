@@ -1,7 +1,6 @@
 extends KinematicBody
 
 onready var camera = $Pivot/Camera
-onready var Decal = load("res://Player/Decal.tscn")
 
 var speed = 5
 var gravity = -8.0
@@ -10,10 +9,14 @@ var mouse_sensitivity = 0.002
 var mouse_range = 1.2
 var velocity = Vector2.ZERO
 
+var to_pickup = null
+
+onready var Guns = get_node("/root/Game/Guns")
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	$Pivot/Camera.current = true
+	$Pivot/Camera/Crosshair.hide()
 
 func _physics_process(_delta):
 	velocity = get_input()*speed
@@ -26,6 +29,9 @@ func _physics_process(_delta):
 	
 	if Input.is_action_pressed("shoot"):
 		shoot()
+
+	if Input.is_action_just_pressed("pickup"):
+		pickup()
 
 func _input(event):
 	if event is InputEventMouseMotion:
@@ -47,18 +53,33 @@ func get_input():
 	return input_dir
 	
 func shoot():
-	if not $Pivot/Flash.visible:
-		$Pivot/Flash.show()
-		$Pivot/Flash/Timer.start()
-		if $Pivot/RayCast.is_colliding():
-			var t = $Pivot/RayCast.get_collider()
-			var p = $Pivot/RayCast.get_collision_point()
-			var n = $Pivot/RayCast.get_collision_normal()
-			var decal = Decal.instance()
-			t.add_child(decal)
-			decal.global_transform.origin = p
-			decal.look_at(p + n, Vector3.UP)
+	var gun = get_node_or_null("Pivot/Gun")
+	if gun != null and gun.has_method("shoot"):
+		gun.shoot()
 
-	
-func _on_Timer_timeout():
-	$Pivot/Flash.hide()
+func pickup():
+	var gun = get_node_or_null("Pivot/Gun")
+	if gun != null:
+		var to_drop = gun.Pickup.instance()
+		Guns.add_child(to_drop)
+		to_drop.global_transform.origin = global_transform.origin + Vector3(0,1.5,0)
+		var throw = Vector3.ZERO
+		throw += -camera.global_transform.basis.z * 8.0
+		throw += -camera.global_transform.basis.y * 0.5
+		to_drop.apply_central_impulse(throw)
+		gun.queue_free()
+		$Pivot/Camera/Crosshair.hide()
+	elif to_pickup != null:
+		gun = to_pickup.Pickup.instance()
+		gun.name = "Gun"
+		$Pivot.add_child(gun)
+		$Pivot/Camera/Crosshair.show()
+		to_pickup.queue_free()
+
+func _on_Area_body_entered(body):
+	if body.is_in_group("Guns"):
+		to_pickup = body
+
+
+func _on_Area_body_exited(_body):
+	to_pickup = null
