@@ -57,7 +57,8 @@ func shoot():
 			var decal = Decal.instance()
 			t.add_child(decal)
 			decal.global_transform.origin = p
-			decal.look_at(p + n, Vector3.UP)
+			if n != Vector3.UP:
+				decal.look_at(p + n, Vector3.UP)
 
 	
 func _on_Timer_timeout():
